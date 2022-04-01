@@ -1,10 +1,8 @@
 # NEncaVIB
 Non-Equilibrium Non-Crossing Approximation with VIBrations
 
-This code uses the equations by Ned S. Wingreen and Yigal Meir
-Phys. Rev. B 49, 11040 – Published 15 April 1994 to account for the non-equilibrium Kondo effect between two electrodes. The impurity is in the present version treated as a single orbital and its total spin si fixed to 1/2. The code is very efficient and converges with great accuracy by using convolutions coded in FFT (needs fftw3).
-The code uses the self-consisten Born Approximation to deal with a local vibration of the impurity. As is done, we can add as many vibrations as needed. This follwos the paper by P. Roura-Bas, L. Tosi, and A. A. Aligia
-Phys. Rev. B 93, 115139 – Published 24 March 2016.
+This code uses the equations by Ned S. Wingreen and Yigal Meir Phys. Rev. B 49, 11040 – Published 15 April 1994 to account for the non-equilibrium Kondo effect between two electrodes. The impurity is in the present version treated as a single orbital and its total spin si fixed to 1/2. The code is very efficient and converges with great accuracy by using convolutions coded in FFT (needs fftw3).
+The code uses the self-consistent Born Approximation to deal with a local vibration of the impurity. As is done, we can add as many vibrations as needed. This follwos the paper by P. Roura-Bas, L. Tosi, and A. A. Aligia Phys. Rev. B 93, 115139 – Published 24 March 2016.
 We have run the code using the Kondo efect with various e-vib couplind and it converges excedeengly well even in the strong coupling regime. Moreover the code is totally able to recover the vibronic regime in the presence of a bias drop, which is very interesting.
 
 The input is in the file WMnca.input. And example is:
@@ -81,17 +79,17 @@ Current.dat !file with V and Current OUTPUT
 
 the code uses two more files:
 
-The Gamma:dat file that reads as:
+The Gamma.dat file that reads as:
 
 G  ! two options G (Gaussian= or L (Lorentzian) for the Hybridisation function
 0.0 0 1.0  ! G0, E0, D0 for left electrode (eV)
 0.1 0 2.0   ! same for right electrode 8eV)
 
-where if it is a gaussina the hybridization function looks like G0*exp (-(omega-E0)^2/D0^2), a Lorentzian like G0/(omega-E0)^2+D0^2)
+where if it is a gaussian the hybridization function looks like G0*exp (-(omega-E0)^2/D0^2), a Lorentzian like G0/(omega-E0)^2+D0^2)
 so that D0 is like an effective bandwidth and G0 is the value of the hybridisation (times 2 pi would be the width of the level) at
 the energy E0.
 
-The other file is the Hamiltonian that here is just a level referred to the Fermi energy.
+The other file is the Hamiltonian that here it is just a level referred to the Fermi energy.
 Hamiltonian.dat ::
 
 -0.65
