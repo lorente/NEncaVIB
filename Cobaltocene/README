@@ -1,0 +1,12 @@
+Calculation of the PDOS published in 
+Garnier et al. The Kondo effect of a molecular tip as a magnetic sensor
+Nano Letters 20, 8193 (2020)
+However, I could not retrieve the parameters I used for that
+calculation, and I used another ones (the frequencies are
+the ones from the DFT calculation, but I lost the e-ph couplings).
+
+One of the messages was that a strong structure that people thought
+was a molecular orbital, is actually a Kondo+vibrations feature.
+
+
+Nicolas Lorente

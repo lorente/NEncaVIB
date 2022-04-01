@@ -16,6 +16,7 @@ OBJ = declarations.o  used_files.o  present_version.o \
 
 WNncaVIB.out: $(OBJ)
 	$(FC) $(FFLAGS) $(OBJ) $(LIBS) -o WNncaVIB.out
+	rm -f *.o *.mod
 
 declarations.o: declarations.f90
 	$(FC) $(FFLAGS) $(FF)  declarations.f90

@@ -17,8 +17,8 @@ CONTAINS
 
       print *, " "
       print *, "____________________________________________"
-      print *, "Règles de somme pour les retardées : "
-      print *, " (doit être 1) "
+      print *, "Sum rules for D and G : "
+      print *, " (should be 1) "
       print *, "              D :", somme*step_omega
       print *, " "
 

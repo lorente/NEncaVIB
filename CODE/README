@@ -1,0 +1,20 @@
+To compile please make sure you have installed:
+blas
+lapack
+fftw3
+all of them freely accessible and available in the installers of
+many Linux distros.
+
+After having the above library simplity type
+make
+in the directory holding the present file.
+
+To run you need three files in the running directory:
+Gamma.dat  that includes two broadenings
+Hamiltonian.dat that includes the electronic level
+WNnca.input that has all the parameters of the run including the vibrational modes and coupligns
+
+You can download the present code from git https://github.com/qphensurf/NEncaVIB
+
+Nicolas Lorente
+

@@ -140,12 +140,6 @@ Contains
           step_omega = omega (2) - omega (1)
           
  
-! Changed 6 Juin, remove comments to go back
-! I remove convergence on hybridization 'because it has been done'
-! and it is causing failure to converge on phonons
-! NOW I just converged first on hybridization and not self-cons
-! on phonons: (I also avoid calling Pi_lesser on the main loop, change this back)
-!         SelfGl=zero
                  g (:) = Dl (:)
  
                  h = (-Fermi_t) * Gamma_t + (-Fermi_s) * Gamma_s
@@ -173,7 +167,6 @@ Contains
 
       return
       end subroutine Sigma_lesser
-! Sigma bigger 
 ! Sigma lesser
       subroutine Sigma_lesser0 (N_omega, N_spin, Dl, Gamma_t, Gamma_s, &
       &     fermi_t, fermi_s, omega, SelfGl)

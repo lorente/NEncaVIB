@@ -1,0 +1,20 @@
+-5.0  !Omega_ini (eV)
+0.00001 !step_omega (eV)
+0.0001 !Broadening eta (eV)
+0.00 !B_field (Teslas)
+2.0 !gyromagnetic factor
+5.0 !Temperature (K)
+0.01 !Convergence tolerance
+20 !Maximum number of loops
+-0.05 !Bias ini (Volts)
+0.05 !Bias fin (Volts)
+10 !Number of bias
+0.5 !Fraction of bias drop at the tip (1-Bias drops at sample)
+Hamiltonian.dat !name of the file containing the level energy (rpt Fermi)
+Gamma.dat !file with Go, Omega_0, Delta_0 for tip and substrate
+Current.dat !file with V and Current OUTPUT
+1 !N_vib number of modes
+20.0 ! Frequency in meV
+4.0 ! e-ph coupling meV
+.true. ! convergence loops on phonon?
+

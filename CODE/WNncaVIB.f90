@@ -1,7 +1,10 @@
 program WNncaVIB
+! From
+! https://github.com/qphensurf/NEncaVIB
+!
 ! This is a Keldysh implementation
 ! of nca for a single electronic level
-! only spin degeneracion
+! only spin degeneration
 !
 ! we add vibrational modes
 !
@@ -9,9 +12,28 @@ program WNncaVIB
 !        D< is Dl; D> is Db; Dr is Dr
 !
 ! Following Wingreen and Meir PRB 49, 11040 (1994)
+! and Roura-Bas, Tosi, and  Aligia  PRB 87, 195136 (2013)
 !
-! Date
-!      13 May 2020
+!     GNU General Public Licence
+!
+!        WNncaVIB is free software: you can redistribute it and/or modify
+!        it under the terms of the GNU General Public License as published by
+!        the Free Software Foundation, either version 3 of the License, or
+!        any later version.
+!
+!        WNncaVIB is distributed in the hope that it will be useful,
+!        but WITHOUT ANY WARRANTY; without even the implied warranty of
+!        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+!        GNU General Public License for more details.
+!
+!        A copy of the GNU General Public License
+!        is in  <http://www.gnu.org/licenses/>.
+!
+! Author:
+!    Nicolas Lorente
+!
+! Date:
+!      08 April 2022
 
 Use declarations
 Use used_files
@@ -28,7 +50,7 @@ Use io
       print *, " "
       print *, "RUNNING non-equilibrium NCA wth vibrations"
       print *, " "
-      print *, "Version::", version, "Date::", DateVersion
+      print *, "Version::", version, "  Date::", DateVersion
       print *, " "
 ! read input file (WNnca.input):
       call  input (omega, step_omega, Temperature, eta, N_spin, &
@@ -51,9 +73,7 @@ Use io
 
 
     open (unit_pdos, file = 'PDOS_bias.dat')
-    open (unit_ddos, file = 'dPDOS_bias.dat')
     open (unit_current, file = output_file)
-    open (unit_conductance, file = 'conductance.dat')
 
 ! Allocation of main arrays that have not been allocated on input
       N_omega = size (omega, 1)
@@ -68,12 +88,6 @@ BIASLOOP: do i_V=1, N_bias
         bias = 0
         else
         bias = Bias_ini + (i_V-1._q)*(Bias_fin-Bias_ini) / (N_bias-1._q)
-        endif
-  
-        if (i_V == 1) then 
-        curr_store = 0._q
-        else
-        curr_store = curr
         endif
 
         print *, ' '
@@ -90,18 +104,11 @@ BIASLOOP: do i_V=1, N_bias
       & Fermi_t, Fermi_s, bias, Temperature, impurity_hamiltonian_file,  &
       & Hamiltonian, eta, Gr, Dr) 
  
-! Use previous bias converged GF for better convergence
-!removed because this gives convergence issues with bias!!
-!     if (i_V /= 1) then
-
-!        Dr=Dr_store
-!        Gr=Gr_store
-
-!     endif
 
       print *, ' '
       print *, '1. Starting convergence of retarded GFs'
       print *, ' '
+
 Self_consistency_R: do self_index = 1, Max_loop_index
 
       call Self_Pi (N_omega, N_spin, Gr, Gamma_t, Gamma_s,  &
@@ -118,13 +125,14 @@ Self_consistency_R: do self_index = 1, Max_loop_index
 
       call G_green_R (N_spin, omega, Hamiltonian, SelfG, Gr)
 !
-     if (N_bias == 1) then
-     open (unit_screen, file="PDOS_fermion.dat")
-     do i_omega = 1, N_omega
-     write (unit_screen, *) omega (i_omega)*hartree, -aimag(sum (Gr (:,i_omega)))/(hartree*pi_d)
-     enddo
-     close (unit_screen)
-     endif
+! Uncomment if needed (June 21)
+!     if (N_bias == 1) then
+!     open (unit_screen, file="PDOS_fermion.dat")
+!     do i_omega = 1, N_omega
+!     write (unit_screen, *) omega (i_omega)*hartree, -aimag(sum (Gr (:,i_omega)))/(hartree*pi_d)
+!     enddo
+!     close (unit_screen)
+!     endif
 
 ! Are we converged?
 
@@ -156,21 +164,13 @@ Self_consistency_R: do self_index = 1, Max_loop_index
 ! to something like the thermal one
 ! or use previous bias converged GF for better convergence
 
-!Changed 6 Juin pour éviter "accumulation d'erreurs" entre V
-! Change back removing !#
- !#    if (i_V == 1) then
 
            Dl = -2*ui*aimag(Dr)
+
          do i_spin =1, N_spin
            Gl (i_spin,:) =-2*ui*aimag(Gr(i_spin,:)) 
          enddo
 
- !#    else
-
-!#         Dl=Dl_store
-!#         Gl=Gl_store
-
- !#    endif
 
       print *, ' '
       print *, '2. Starting preconvergence of lesser GFs'
@@ -184,14 +184,15 @@ Self_consistency_R: do self_index = 1, Max_loop_index
        call Sigma_lesser0 (N_omega, N_spin, Dl, Gamma_t, Gamma_s, &
       &       fermi_t, fermi_s, omega, SelfGl)
 
-
            Gl_store = Gl
+
        call G_lesser (N_spin, Gr, SelfGl, Gl)
 
        call Pi_lesser (N_omega, N_spin, omega, Gamma_t, Gamma_s, &
       &      fermi_t, fermi_s, Gl, SelfDl)
 
-           Dl_store = Dl
+       Dl_store = Dl
+
        call D_lesser (Dr, SelfDl, Dl)
 
       call convergence (N_omega, N_spin, Dl, Dl_store,  &
@@ -206,14 +207,14 @@ Self_consistency_R: do self_index = 1, Max_loop_index
       print *, ' '
 
      if (vib_loop) then
+
 Self_consistency_lesser: do self_index = 1, Max_loop_index
 
        call Sigma_lesser (N_omega, N_spin, Dl, Gamma_t, Gamma_s, &
       &     fermi_t, fermi_s, omega, N_vib, indexvib, W, Bose, Gl,  SelfGl)
 
+       Gl_store = Gl
 
-
-           Gl_store = Gl
        call G_lesser (N_spin, Gr, SelfGl, Gl)
 
        call Sigma_bigger (N_omega, N_spin, Db, Gamma_t, Gamma_s, &
@@ -221,19 +222,7 @@ Self_consistency_lesser: do self_index = 1, Max_loop_index
 
        call G_bigger (N_spin, Gr, SelfGb, Gb)
 
-! Changed 6 Juin
-!      call Pi_lesser (N_omega, N_spin, omega, Gamma_t, Gamma_s, &
-!     &      fermi_t, fermi_s, Gl, SelfDl)
-
-!          Dl_store = Dl
-!      call D_lesser (Dr, SelfDl, Dl)
-
-!      call Pi_bigger (N_omega, N_spin, omega, Gamma_t, Gamma_s, &
-!     &      fermi_t, fermi_s, Gb, SelfDb)
-
-!      call D_bigger (Dr, SelfDb, Db)
-
-      call convergence (N_omega, N_spin, Dl, Dl_store,  &
+       call convergence (N_omega, N_spin, Dl, Dl_store,  &
                                Gl, Gl_store, tol, converged)
 
                if (converged) exit
@@ -259,13 +248,15 @@ Self_consistency_lesser: do self_index = 1, Max_loop_index
             print *, '     No convegence loops for phonons, only 1st iteration!'
             print *, ' '
        endif
-     if (N_bias == 1) then
-     open (unit_screen, file="PDOS_Gl.dat")
-     do i_omega = 1, N_omega
-     write (unit_screen, *) omega (i_omega)*hartree, aimag(sum (Gl (:,i_omega)))/(2*pi_d*hartree)
-     enddo
-     close (unit_screen)
-     endif
+
+! Uncomment if needed (June 21)
+!     if (N_bias == 1) then
+!     open (unit_screen, file="PDOS_Gl.dat")
+!     do i_omega = 1, N_omega
+!     write (unit_screen, *) omega (i_omega)*hartree, aimag(sum (Gl (:,i_omega)))/(2*pi_d*hartree)
+!     enddo
+!     close (unit_screen)
+!     endif
 
        call normalization (N_omega, Dl, Gl, constant, omega)
 
@@ -277,27 +268,22 @@ Self_consistency_lesser: do self_index = 1, Max_loop_index
        write (unit_pdos, '(2g14.4)') omega (i)*hartree, &
      &         (-aimag (GGR(i_spin,i))/(pi_d*hartree), i_spin=1, N_spin)
        enddo
-       do i =5, N_omega,5
-       write (unit_ddos, '(2g14.4)') omega (i)*hartree, &
-     &    -aimag (GGR(1,i)-GGR(1,i-5))/(pi_d*hartree*5*step_omega*hartree)
-       enddo
      else
        do i =1, N_omega
-       write (unit_pdos, '(3g14.4)') omega (i)*hartree, &
-     &         (-aimag (GGR(i_spin,i))/(pi_d*hartree), i_spin=1, N_spin)
+       write (unit_pdos, '(4g14.4)') omega (i)*hartree, &
+     &         (-aimag (GGR(i_spin,i))/(pi_d*hartree), i_spin=1, N_spin), &
+     &         -aimag (sum(GGR(:,i)))/(pi_d*hartree)
        enddo
-       endif
+     endif
+
        write (unit_pdos, *) 
 
        call current (Gamma_t, Gamma_s, GGR, fermi_t, fermi_s, &
      &       curr, omega, N_omega, N_spin)
 
-       if (i_V == 1) curr_store=curr
-
 ! Final result
 
        write (unit_current, '(2g14.4)') bias*Hartree, curr*6.6236E6
-       write (unit_conductance, '(2g14.4)') bias*Hartree,(curr-curr_store)/(Bias_fin-Bias_ini)*(N_bias-1._q)/Hartree*6.6236E6
        print *, "Bias (V) et Courant (nA)::", bias*Hartree, curr*6.6236E6
        print *, "__________________________________________________"
 

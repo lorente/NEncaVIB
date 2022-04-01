@@ -39,7 +39,7 @@ module declarations
 
   real (q) :: omega_ini, omega_fin, step_omega,  tol, tol_a
   real (q) :: eta_input, gyro, B_field, B_au, E_fermi, Temperature
-  real (q) :: Bias_ini, Bias_fin, bias, bias_fraction, curr,curr_store
+  real (q) :: Bias_ini, Bias_fin, bias, bias_fraction, curr
 
 ! complex variables
 

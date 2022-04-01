@@ -1,0 +1,5 @@
+This example computes the density of states projected (PDOS) on a single level that
+is coupled to a vibration. Two electrodes are assumed, but the coupling to
+one of them is zero. It is then an equilibrium calculation of the PDOS.
+
+Nicolas Lorente

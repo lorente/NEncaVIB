@@ -102,11 +102,13 @@ CONTAINS
 ! Zeeman energy in atomic units :
        B_au =  gyro * B_field * 2.127159016E-6! Bohr magneton included
 
-       if (B_field == 0) then
-            N_spin=1
-       else
-            N_spin=2
-       endif
+!       if (B_field == 0) then
+!            N_spin=1
+!       else
+!            N_spin=2
+!       endif
+! Present version always N_spin=2 
+             N_spin=2
 ! change all to atomic units :
        omega_ini = omega_ini / hartree
        step_omega =step_omega/hartree
